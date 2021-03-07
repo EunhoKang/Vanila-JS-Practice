@@ -2,11 +2,11 @@
 let score=0;
 let time=0;
 let isPlaying=false;
-let maxTime=3;
+let maxTime=4;
 let buttonState=["게임 중...","게임 시작!"];
 let typeTimer;
 
-let randomWords=["Apple","Pear","Mellon","Peach"];
+let randomWords=[];
 
 let wordInput;
 let wordDisplay;
@@ -52,14 +52,25 @@ function TimeCount(){
 
 function GameStart(){
     if(isPlaying) return;
-    isPlaying=true;
-    score=0;
-    scoreDisplay.innerText=score;
-    wordInput.value="";
-    wordDisplay.innerText=randomWords[Math.floor(Math.random()*(randomWords.length-1))];
-    TimeReset();
-    typeTimer=setInterval(TimeCount,1000);
-    buttonChange(isPlaying);
+    axios.get('https://random-word-api.herokuapp.com/word?number=100').then(function (response) {
+        response.data.forEach((word)=>{
+            if(5<word.length && word.length<10){
+                randomWords.push(word);
+            }
+        })
+        isPlaying=true;
+        score=0;
+        scoreDisplay.innerText=score;
+        wordInput.value="";
+        wordDisplay.innerText=randomWords[Math.floor(Math.random()*(randomWords.length-1))];
+        TimeReset();
+        typeTimer=setInterval(TimeCount,1000);
+        buttonChange(isPlaying);
+        })
+    .catch(function (error) {
+        // handle error
+        console.log(error);
+    })
 }
 
 function GameEnd(){
