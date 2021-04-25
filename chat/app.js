@@ -5,6 +5,7 @@ const http=require("http");
 const server=http.createServer(app);//서버 생성.
 const socketIO=require("socket.io");
 const io=socketIO(server);          //
+const moment=require("moment");
 
 app.use(express.static(path.join(__dirname,"src"))); 
 //"scr"라는 이름의 디렉토리에 포함된 이미지, CSS 파일 및 JavaScript 파일을 제공
@@ -13,8 +14,12 @@ const PORT=process.env.PORT || 5000; //프로세스 환경에 포트가 지정�
 
 io.on('connection',(socket)=>{
     socket.on("chatting",(data)=>{
-        console.log(data);
-        io.emit("chatting","from server");
+        const {name,msg}=data;
+        io.emit("chatting",{
+            name,
+            msg,
+            time: moment(new Date()).format("h:ss A")
+        });
     });
 });
 
